@@ -116,6 +116,11 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
+        .card {
+        transform: rotateY(180deg); /* Mantém as cartas viradas inicialmente */
+        transition: transform 0.3s ease; /* Suaviza a virada */
+}
+
         @media (max-width: 768px) {
     .memory-game {
         grid-template-columns: repeat(4, 70px); /* Ajusta para 4 colunas */
@@ -161,6 +166,7 @@
         padding: 8px 12px;
     }
 }
+
 
     </style>
 </head>
@@ -340,45 +346,54 @@
 
     <script>
         const cards = document.querySelectorAll('.memory-card');
-
-        const player1Name = localStorage.getItem('player1Name');
-        const player2Name = localStorage.getItem('player2Name');
-
+    
+        const player1Name = localStorage.getItem('player1Name') || 'Jogador 1';
+        const player2Name = localStorage.getItem('player2Name') || 'Jogador 2';
+    
         // Atualiza o texto do placar para exibir os nomes corretamente
         document.getElementById('player1-score').textContent = `${player1Name}: 0`;
         document.getElementById('player2-score').textContent = `${player2Name}: 0`;
-
+    
         let currentPlayer = 1;
         let player1Score = 0;
         let player2Score = 0;
         let hasFlippedCard = false;
         let lockBoard = false;
         let firstCard, secondCard;
-
+    
         const player1ScoreDisplay = document.getElementById('player1-score');
         const player2ScoreDisplay = document.getElementById('player2-score');
         const gameOverDiv = document.getElementById('game-over');
         const winnerText = document.getElementById('winner');
-
+    
+        // Função para embaralhar as cartas
+        function shuffle() {
+            cards.forEach(card => {
+                card.classList.remove('flip'); // Garante que todas as cartas estão viradas para baixo
+                let randomPos = Math.floor(Math.random() * cards.length);
+                card.style.order = randomPos; // Define uma posição aleatória
+            });
+        }
+    
         function flipCard() {
             if (lockBoard) return;
             if (this === firstCard) return;
-
+    
             this.classList.add('flip');
-
+    
             if (!hasFlippedCard) {
                 hasFlippedCard = true;
                 firstCard = this;
                 return;
             }
-
+    
             secondCard = this;
             checkForMatch();
         }
-
+    
         function checkForMatch() {
             let isMatch = firstCard.dataset.framework === secondCard.dataset.framework;
-
+    
             if (isMatch) {
                 updateScore();
                 disableCards();
@@ -386,7 +401,7 @@
                 unflipCards();
             }
         }
-
+    
         function updateScore() {
             if (currentPlayer === 1) {
                 player1Score++;
@@ -397,10 +412,10 @@
             }
             resetBoard();
         }
-
+    
         function unflipCards() {
             lockBoard = true;
-
+    
             setTimeout(() => {
                 firstCard.classList.remove('flip');
                 secondCard.classList.remove('flip');
@@ -408,10 +423,10 @@
                 resetBoard();
             }, 1500);
         }
-
+    
         function switchPlayer() {
             currentPlayer = currentPlayer === 1 ? 2 : 1;
-
+    
             if (currentPlayer === 1) {
                 document.body.classList.remove('player2');
                 document.body.classList.add('player1');
@@ -420,57 +435,58 @@
                 document.body.classList.add('player2');
             }
         }
-
+    
         function disableCards() {
             firstCard.removeEventListener('click', flipCard);
             secondCard.removeEventListener('click', flipCard);
             resetBoard();
         }
-
+    
         function resetBoard() {
             [hasFlippedCard, lockBoard] = [false, false];
             [firstCard, secondCard] = [null, null];
             checkGameOver();
         }
-
+    
         function checkGameOver() {
             const totalCards = cards.length;
             const flippedCards = document.querySelectorAll('.memory-card.flip').length;
-
+    
             if (flippedCards === totalCards) {
                 showGameOver();
             }
         }
-
+    
         function showGameOver() {
-            let winner = player1Score > player2Score ? 'Jogador 1' : player2Score > player1Score ? 'Jogador 2' : 'Empate';
+            let winner = player1Score > player2Score ? player1Name : player2Score > player1Score ? player2Name : 'Empate';
             winnerText.textContent = `${winner} ganhou!`;
             gameOverDiv.style.display = 'block';
         }
-
+    
         function restartGame() {
-         gameOverDiv.style.display = 'none';
-        player1Score = 0;
-        player2Score = 0;
-        player1ScoreDisplay.textContent = `${player1Name}: 0`;  // Exibe o nome novamente
-        player2ScoreDisplay.textContent = `${player2Name}: 0`;  // Exibe o nome novamente
-
-        cards.forEach(card => {
-            card.classList.remove('flip');
-            card.addEventListener('click', flipCard);
-        });
-
-    shuffle();
-
-
-        (function shuffle() {
+            gameOverDiv.style.display = 'none';
+            player1Score = 0;
+            player2Score = 0;
+            player1ScoreDisplay.textContent = `${player1Name}: 0`;
+            player2ScoreDisplay.textContent = `${player2Name}: 0`;
+    
+            shuffle(); // Chama a função de embaralhamento
             cards.forEach(card => {
-                let randomPos = Math.floor(Math.random() * cards.length);
-                card.style.order = randomPos;
+                card.addEventListener('click', flipCard);
             });
-        })();
-
+    
+            currentPlayer = 1;
+            document.body.classList.add('player1');
+            document.body.classList.remove('player2');
+            resetBoard();
+        }
+    
+        // Chama o embaralhamento inicial ao carregar o jogo
+        shuffle();
+    
+        // Adiciona os eventos de clique às cartas
         cards.forEach(card => card.addEventListener('click', flipCard));
     </script>
+    
 </body>
 </html>
