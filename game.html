@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: rgb(2, 191, 2);
+        }
+
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(5, 90px);
+            grid-gap: 15px;
+            margin-top: 100px;
+        }
+
+        .memory-card {
+            width: 90px;
+            height: 120px;
+            position: relative;
+            perspective: 1000px;
+            background-image: url('imgens/verso.jpg');
+            border-radius: 10px;
+        }
+
+        .memory-card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .memory-card.flip .memory-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card-front,
+        .memory-card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 8px;
+        }
+
+        .memory-card-front {
+            background-color: white;
+            background-image: url('imgens/verso.jpg');
+            border-radius: 8px;
+        }
+
+        .memory-card-back {
+            background-color: #f3f3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('imgens/card-back.jpg'); 
+            background-size: cover;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card-back img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            background-color: #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            position: absolute;
+            top: 10px;
+        }
+
+        .player-score {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .player1 {
+            background-color: rgb(2, 191, 2);
+        }
+
+        .player2 {
+            background-color: #f90505;
+        }
+
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scoreboard">
+        <div class="player-score"><span id="player1-score">0</span></div>
+        <div class="player-score"><span id="player2-score">0</span></div>
+    </div>
+    <div class="memory-game">
+        <div class="memory-card" data-framework="react">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/flamengo.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="react">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/flamengo.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="debora">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/debora.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="debora">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/debora.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="lillo">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/lillo.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="lillo">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/lillo.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="baloes">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/baloes.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="baloes">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/baloes.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="coracao">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/coracao.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="coracao">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/coracao.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="cabrito">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/cabrito.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="cabrito">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/cabrito.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="stitch">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/stitch.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="stitch">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/stitch.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="hulk">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/hulk.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="hulk">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/hulk.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="bob">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/bob-patrick.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="bob">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/bob-patrick.png" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="lg">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/lg.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <div class="memory-card" data-framework="lg">
+            <div class="memory-card-inner">
+                <div class="memory-card-front"></div>
+                <div class="memory-card-back">
+                    <img src="imgens/lg.jpg" alt="flamengo">
+                </div>
+            </div>
+        </div>
+        <!-- Outras cartas aqui -->
+    </div>
+
+    <div class="game-over" id="game-over">
+        <h2 id="winner"></h2>
+        <button onclick="restartGame()">Reiniciar Jogo</button>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.memory-card');
+
+        const player1Name = localStorage.getItem('player1Name');
+        const player2Name = localStorage.getItem('player2Name');
+
+        // Atualiza o texto do placar para exibir os nomes corretamente
+        document.getElementById('player1-score').textContent = `${player1Name}: 0`;
+        document.getElementById('player2-score').textContent = `${player2Name}: 0`;
+
+        let currentPlayer = 1;
+        let player1Score = 0;
+        let player2Score = 0;
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+
+        const player1ScoreDisplay = document.getElementById('player1-score');
+        const player2ScoreDisplay = document.getElementById('player2-score');
+        const gameOverDiv = document.getElementById('game-over');
+        const winnerText = document.getElementById('winner');
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.framework === secondCard.dataset.framework;
+
+            if (isMatch) {
+                updateScore();
+                disableCards();
+            } else {
+                unflipCards();
+            }
+        }
+
+        function updateScore() {
+            if (currentPlayer === 1) {
+                player1Score++;
+                player1ScoreDisplay.textContent = `${player1Name}: ${player1Score}`;
+            } else {
+                player2Score++;
+                player2ScoreDisplay.textContent = `${player2Name}: ${player2Score}`;
+            }
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                switchPlayer();
+                resetBoard();
+            }, 1500);
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+
+            if (currentPlayer === 1) {
+                document.body.classList.remove('player2');
+                document.body.classList.add('player1');
+            } else {
+                document.body.classList.remove('player1');
+                document.body.classList.add('player2');
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            resetBoard();
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+            checkGameOver();
+        }
+
+        function checkGameOver() {
+            const totalCards = cards.length;
+            const flippedCards = document.querySelectorAll('.memory-card.flip').length;
+
+            if (flippedCards === totalCards) {
+                showGameOver();
+            }
+        }
+
+        function showGameOver() {
+            let winner = player1Score > player2Score ? 'Jogador 1' : player2Score > player1Score ? 'Jogador 2' : 'Empate';
+            winnerText.textContent = `${winner} ganhou!`;
+            gameOverDiv.style.display = 'block';
+        }
+
+        function restartGame() {
+         gameOverDiv.style.display = 'none';
+        player1Score = 0;
+        player2Score = 0;
+        player1ScoreDisplay.textContent = `${player1Name}: 0`;  // Exibe o nome novamente
+        player2ScoreDisplay.textContent = `${player2Name}: 0`;  // Exibe o nome novamente
+
+        cards.forEach(card => {
+            card.classList.remove('flip');
+            card.addEventListener('click', flipCard);
+        });
+
+    shuffle();
+}
+
+        (function shuffle() {
+            cards.forEach(card => {
+                let randomPos = Math.floor(Math.random() * cards.length);
+                card.style.order = randomPos;
+            });
+        })();
+
+        cards.forEach(card => card.addEventListener('click', flipCard));
+    </script>
+</body>
+</html>
