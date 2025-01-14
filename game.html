@@ -116,6 +116,49 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
+        @media (max-width: 768px) {
+    .memory-game {
+        grid-template-columns: repeat(4, 70px); /* Ajusta para 4 colunas */
+        grid-gap: 10px; /* Reduz o espaço entre as cartas */
+    }
+
+    .memory-card {
+        width: 70px; /* Reduz a largura das cartas */
+        height: 100px; /* Reduz a altura das cartas */
+    }
+}
+
+@media (max-width: 480px) {
+    .memory-game {
+        grid-template-columns: repeat(3, 60px); /* Ajusta para 3 colunas */
+        grid-gap: 8px; /* Reduz ainda mais o espaço entre as cartas */
+    }
+
+    .memory-card {
+        width: 60px; /* Cartas menores */
+        height: 90px;
+    }
+
+    .scoreboard {
+        font-size: 14px; /* Ajusta o tamanho do texto do placar */
+        padding: 5px; /* Reduz o espaçamento do placar */
+    }
+
+    .memory-card img {
+        width: 100%; /* Imagens ocupam todo o espaço da carta */
+        height: auto;
+    }
+
+    .game-over h2 {
+        font-size: 18px; /* Título menor para o aviso de vencedor */
+    }
+
+    .game-over button {
+        font-size: 14px; /* Botão menor */
+        padding: 8px 12px;
+    }
+}
+
     </style>
 </head>
 <body>
